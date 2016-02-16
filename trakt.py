@@ -1,8 +1,22 @@
 #! /usr/bin/env python3
 
+from datetime import datetime
+
 import configparser
 import json
+import pytz
 import requests
+
+
+def get_time():
+    local = pytz.timezone("Asia/Kolkata")
+    local_time = str(datetime.now())
+    naive = datetime.strptime(local_time, "%Y-%m-%d %H:%M:%S.%f")
+    local_dt = local.localize(naive, is_dst=None)
+    utc_dt = local_dt.astimezone(pytz.utc)
+    final_date = "{0}Z".format(str(utc_dt)[:-9].replace(" ", "T"))
+    return final_date
+
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -52,7 +66,7 @@ for val in jso:
         vals["shows"][0]["seasons"][0]["number"] = season_no
         vals["shows"][0]["seasons"][0]["episodes"] = [{}]
         vals["shows"][0]["seasons"][0]["episodes"][0][
-            "watched_at"] = "2016-02-15T14:30:10.000Z"
+            "watched_at"] = get_time()
         vals["shows"][0]["seasons"][0]["episodes"][0]["number"] = episode
         break
 
