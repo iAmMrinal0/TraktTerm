@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 import configparser
 import json
@@ -53,9 +53,9 @@ showname = input("enter show name:")
 season_no = int(input("enter season number:"))
 episode = int(input("enter episode number:"))
 url = "https://api-v2launch.trakt.tv/calendars/my/shows/"
-date = "2016-02-11"
+date_since = str(date.today() - timedelta(days=7))
 days = "7"
-resp = requests.get(url + date + "/" + days, headers=headers)
+resp = requests.get(url + date_since + "/" + days, headers=headers)
 print(resp.status_code)
 jso = resp.json()
 vals = {}
