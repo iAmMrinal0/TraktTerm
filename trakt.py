@@ -57,24 +57,26 @@ def main():
     date_since = str(date.today() - timedelta(days=7))
     days = "7"
     resp = requests.get(url + date_since + "/" + days, headers=headers)
-    print(resp.status_code)
-    jso = resp.json()
-    vals = {}
-    for val in jso:
-        if showname.lower() in val["show"]["title"].lower():
-            vals["shows"] = [val["show"]]
-            vals["shows"][0]["seasons"] = [{}]
-            vals["shows"][0]["seasons"][0]["number"] = season_no
-            vals["shows"][0]["seasons"][0]["episodes"] = [{}]
-            vals["shows"][0]["seasons"][0]["episodes"][0][
-                "watched_at"] = get_time()
-            vals["shows"][0]["seasons"][0]["episodes"][0]["number"] = episode
-            break
+    if resp.status_code == 200:
+        jso = resp.json()
+        vals = {}
+        for val in jso:
+            if showname.lower() in val["show"]["title"].lower():
+                vals["shows"] = [val["show"]]
+                vals["shows"][0]["seasons"] = [{}]
+                vals["shows"][0]["seasons"][0]["number"] = season_no
+                vals["shows"][0]["seasons"][0]["episodes"] = [{}]
+                vals["shows"][0]["seasons"][0]["episodes"][0][
+                    "watched_at"] = get_time()
+                vals["shows"][0]["seasons"][0][
+                    "episodes"][0]["number"] = episode
+                break
 
-    url_sync = "https://api-v2launch.trakt.tv/sync/history"
+        url_sync = "https://api-v2launch.trakt.tv/sync/history"
 
-    rep = requests.post(url_sync, data=json.dumps(vals), headers=headers)
-    print(rep.json(), rep.status_code)
+        rep = requests.post(url_sync, data=json.dumps(vals), headers=headers)
+        response = rep.json()
+        print("Episodes added:{0}".format(response["added"]["episodes"]))
 
 
 if __name__ == "__main__":
